@@ -2,8 +2,6 @@
 
 A Raspberry Pi-based controller for a grid of 7-segment LED displays with interactive controls.
 
-Show Image
-
 Overview
 --------
 
