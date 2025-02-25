@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Segment Control - Dark Theme</title>
+    <title>7segwall</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -33,26 +33,34 @@
             background: #1e1e1e;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .grid-container {
-            flex: 1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(5, 1fr);
-            gap: 10px;
-            overflow: auto;
+            grid-template-rows: repeat(5, auto);
+            gap: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+            padding: 0 15px;
         }
         
         .pcb-container {
             background: #2a2a2a;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
             border: 1px solid #383838;
+            transition: transform 0.2s ease;
+        }
+        
+        .pcb-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
         
         .pcb-title {
@@ -75,6 +83,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 0 2px;
         }
         
         .display-title {
@@ -87,6 +96,7 @@
             max-width: 100%;
             height: auto;
             display: inline-block;
+            width: 40px;
         }
         
         .btn {
@@ -279,9 +289,17 @@
         }
         
         /* Responsive adjustments */
-        @media (max-height: 700px) {
+        @media (max-height: 800px) {
+            .grid-container {
+                gap: 8px;
+            }
+            
             .pcb-title, .display-title {
                 font-size: 0.7em;
+            }
+            
+            .seven-segment {
+                width: 35px;
             }
             
             .btn, .preset-input, .preset-select {
@@ -299,6 +317,12 @@
         }
         
         @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding: 0 5px;
+            }
+            
             .preset-controls {
                 flex-direction: column;
                 align-items: center;
@@ -315,6 +339,10 @@
                 max-width: none;
                 width: calc(100% - 20px);
             }
+            
+            .seven-segment {
+                width: 30px;
+            }
         }
     </style>
 </head>
@@ -323,6 +351,7 @@
         <div class="controls">
             <button id="clearAllBtn" class="btn btn-danger">Clear All</button>
             <button id="hoverToggleBtn" class="btn btn-primary">Enable Hover</button>
+            <button id="animateBtn" class="btn btn-success">Start Animation</button>
             
             <!-- Preset Controls -->
             <div class="preset-controls">
@@ -365,7 +394,6 @@
                             
                             {% for display_index in range(3) %}
                                 <div class="display-group">
-                                    <div class="display-title">Display {{ display_index + 1 }}</div>
                                     <svg class="seven-segment" viewBox="0 0 120 200">
                                         <!-- Segment A (top horizontal) -->
                                         <path 
@@ -512,6 +540,29 @@
             $(this).toggleClass('active');
             
             showToast(hoverEnabled ? 'Hover mode enabled' : 'Hover mode disabled', 'info');
+        });
+        
+        $("#animateBtn").click(function() {
+            const $this = $(this);
+            const isAnimating = $this.text() === 'Stop Animation';
+            
+            if (isAnimating) {
+                $.post('/stop_animation', {}, function(response) {
+                    if (response.success) {
+                        $this.text('Start Animation');
+                        $this.removeClass('btn-danger').addClass('btn-success');
+                        showToast('Animation stopped', 'info');
+                    }
+                });
+            } else {
+                $.post('/start_animation', {}, function(response) {
+                    if (response.success) {
+                        $this.text('Stop Animation');
+                        $this.removeClass('btn-success').addClass('btn-danger');
+                        showToast('Animation started', 'success');
+                    }
+                });
+            }
         });
 
         $(".segment, .dp").click(function() {
