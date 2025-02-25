@@ -3,65 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Segment Control</title>
+    <title>Segment Control - Dark Theme</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             font-family: 'Poppins', sans-serif;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #121212;
+            color: #e0e0e0;
+            overflow: hidden;
         }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .controls {
+            flex: 0 0 auto;
+            text-align: center;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            margin-bottom: 10px;
+        }
+        
         .grid-container {
+            flex: 1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            overflow: auto;
         }
+        
         .pcb-container {
-            background: white;
-            padding: 15px;
+            background: #2a2a2a;
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #383838;
         }
+        
         .pcb-title {
             font-weight: 500;
-            margin-bottom: 10px;
-            color: #333;
+            color: #e0e0e0;
             text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 5px;
         }
+        
         .displays-container {
             display: flex;
-            gap: 35px;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
+            flex: 1;
         }
+        
         .display-group {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+        
         .display-title {
-            font-size: 0.8em;
-            margin-bottom: 5px;
-            color: #666;
+            font-size: 0.75em;
+            margin-bottom: 2px;
+            color: #aaaaaa;
         }
-        .controls {
-            margin-bottom: 30px;
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        .seven-segment {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
         }
+        
         .btn {
-            padding: 8px 16px;
-            margin: 0 5px;
+            padding: 6px 12px;
+            margin: 0 3px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
             transition: all 0.2s;
+            font-size: 0.9em;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
         }
+        
         .btn-danger {
             background-color: #dc3545;
             color: white;
@@ -69,6 +108,7 @@
         .btn-danger:hover {
             background-color: #c82333;
         }
+        
         .btn-primary {
             background-color: #007bff;
             color: white;
@@ -76,6 +116,7 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
+        
         .btn-success {
             background-color: #28a745;
             color: white;
@@ -83,6 +124,7 @@
         .btn-success:hover {
             background-color: #218838;
         }
+        
         .btn-warning {
             background-color: #ffc107;
             color: #000;
@@ -90,180 +132,222 @@
         .btn-warning:hover {
             background-color: #e0a800;
         }
+        
         .preset-controls {
-            margin-top: 20px;
+            margin-top: 10px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
+        
         .save-preset, .load-preset {
             display: flex;
-            gap: 10px;
+            gap: 5px;
             align-items: center;
         }
+        
         .preset-input, .preset-select {
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 6px;
+            border: 1px solid #444;
             border-radius: 4px;
             font-family: 'Poppins', sans-serif;
-            min-width: 200px;
+            width: 150px;
+            font-size: 0.9em;
+            background-color: #333;
+            color: #e0e0e0;
         }
+        
         .preset-input:focus, .preset-select:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #0069d9;
+            background-color: #3a3a3a;
         }
-        .seven-segment {
-            width: 60px;
-            height: 100px;
-            display: inline-block;
-            margin: 15px;
-            background: transparent;
-        }
+        
         .segment {
-            fill: #f4f4f4;
+            fill: #333333;
             transition: fill 0.15s;
             cursor: pointer;
+            stroke: #444;
+            stroke-width: 1;
         }
+        
         .segment:hover {
-            fill: #e8e8e8;
+            fill: #444444;
         }
+        
         .segment.on {
-            fill: #ff0000;
+            fill: #ff3333;
+            stroke: #ff6666;
         }
+        
         .dp {
-            fill: #f4f4f4;
+            fill: #333333;
             cursor: pointer;
             transition: fill 0.15s;
+            stroke: #444;
+            stroke-width: 1;
         }
+        
         .dp:hover {
-            fill: #e8e8e8;
+            fill: #444444;
         }
+        
         .dp.on {
-            fill: #ff0000;
+            fill: #ff3333;
+            stroke: #ff6666;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-height: 700px) {
+            .pcb-title, .display-title {
+                font-size: 0.7em;
+            }
+            
+            .btn, .preset-input, .preset-select {
+                font-size: 0.8em;
+                padding: 4px 8px;
+            }
+            
+            .controls {
+                padding: 5px;
+            }
+            
+            .preset-controls {
+                margin-top: 5px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .preset-controls {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <button id="clearAllBtn" class="btn btn-danger">Clear All</button>
-        <button id="hoverToggleBtn" class="btn">Enable Hover</button>
-        
-        <!-- Preset Controls -->
-        <div class="preset-controls">
-            <div class="save-preset">
-                <input type="text" id="presetName" placeholder="Preset name" class="preset-input">
-                <button id="savePresetBtn" class="btn btn-primary">Save Preset</button>
-            </div>
-            <div class="load-preset">
-                <select id="presetSelect" class="preset-select">
-                    <option value="">Select a preset...</option>
-                    {% for preset in presets %}
-                        <option value="{{ preset }}">{{ preset }}</option>
-                    {% endfor %}
-                </select>
-                <button id="loadPresetBtn" class="btn btn-success">Load</button>
-                <button id="deletePresetBtn" class="btn btn-warning">Delete</button>
+    <div class="app-container">
+        <div class="controls">
+            <button id="clearAllBtn" class="btn btn-danger">Clear All</button>
+            <button id="hoverToggleBtn" class="btn btn-primary">Enable Hover</button>
+            
+            <!-- Preset Controls -->
+            <div class="preset-controls">
+                <div class="save-preset">
+                    <input type="text" id="presetName" placeholder="Preset name" class="preset-input">
+                    <button id="savePresetBtn" class="btn btn-primary">Save</button>
+                </div>
+                <div class="load-preset">
+                    <select id="presetSelect" class="preset-select">
+                        <option value="">Select a preset...</option>
+                        {% for preset in presets %}
+                            <option value="{{ preset }}">{{ preset }}</option>
+                        {% endfor %}
+                    </select>
+                    <button id="loadPresetBtn" class="btn btn-success">Load</button>
+                    <button id="deletePresetBtn" class="btn btn-warning">Delete</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="grid-container">
-        {% set pcb_layout = [
-            [1, 6, 11],
-            [2, 7, 12],
-            [3, 8, 13],
-            [4, 9, 14],
-            [5, 10, 15]
-        ] %}
-        
-        {% for row in pcb_layout %}
-            {% for pcb in row %}
-                <div class="pcb-container">
-                    <div class="pcb-title">PCB {{ pcb }}</div>
-                    <div class="displays-container">
-                        {% set display_segments = [
-                            [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D'), (4, 'E'), (5, 'F'), (6, 'G'), (7, 'DP')],
-                            [(16, 'A'), (17, 'B'), (18, 'C'), (19, 'D'), (20, 'E'), (21, 'F'), (22, 'G'), (23, 'DP')],
-                            [(8, 'A'), (9, 'B'), (10, 'C'), (11, 'D'), (12, 'E'), (13, 'F'), (14, 'G'), (15, 'DP')]
-                        ] %}
-                        
-                        {% for display_index in range(3) %}
-                            <div class="display-group">
-                                <div class="display-title">Display {{ display_index + 1 }}</div>
-                                <svg class="seven-segment" viewBox="0 0 120 200">
-                                    <!-- Segment A (top horizontal) -->
-                                    <path 
-                                        class="segment" 
-                                        data-pcb="{{ pcb - 1 }}" 
-                                        data-segment="{{ display_segments[display_index][0][0] }}"
-                                        d="M30 20L90 20L80 35L40 35L30 20"
-                                    />
-                                    
-                                    <!-- Segment B (top right vertical) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][1][0] }}"
-                                        d="M95 25L110 40L110 80L95 95L80 80L80 40L95 25"
-                                    />
-                                    
-                                    <!-- Segment C (bottom right vertical) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][2][0] }}"
-                                        d="M95 105L110 120L110 160L95 175L80 160L80 120L95 105"
-                                    />
-                                    
-                                    <!-- Segment D (bottom horizontal) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][3][0] }}"
-                                        d="M30 180L90 180L80 165L40 165L30 180"
-                                    />
-                                    
-                                    <!-- Segment E (bottom left vertical) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][4][0] }}"
-                                        d="M25 105L40 120L40 160L25 175L10 160L10 120L25 105"
-                                    />
-                                    
-                                    <!-- Segment F (top left vertical) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][5][0] }}"
-                                        d="M25 25L40 40L40 80L25 95L10 80L10 40L25 25"
-                                    />
-                                    
-                                    <!-- Segment G (middle horizontal) -->
-                                    <path 
-                                        class="segment"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][6][0] }}"
-                                        d="M30 100L40 90L80 90L90 100L80 110L40 110L30 100"
-                                    />
-                                    
-                                    <!-- Decimal Point -->
-                                    <circle 
-                                        class="dp"
-                                        data-pcb="{{ pcb - 1 }}"
-                                        data-segment="{{ display_segments[display_index][7][0] }}"
-                                        cx="105" 
-                                        cy="180" 
-                                        r="8"
-                                    />
-                                </svg>
-                            </div>
-                        {% endfor %}
+        <div class="grid-container">
+            {% set pcb_layout = [
+                [1, 6, 11],
+                [2, 7, 12],
+                [3, 8, 13],
+                [4, 9, 14],
+                [5, 10, 15]
+            ] %}
+            
+            {% for row in pcb_layout %}
+                {% for pcb in row %}
+                    <div class="pcb-container">
+                        <div class="pcb-title">PCB {{ pcb }}</div>
+                        <div class="displays-container">
+                            {% set display_segments = [
+                                [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D'), (4, 'E'), (5, 'F'), (6, 'G'), (7, 'DP')],
+                                [(16, 'A'), (17, 'B'), (18, 'C'), (19, 'D'), (20, 'E'), (21, 'F'), (22, 'G'), (23, 'DP')],
+                                [(8, 'A'), (9, 'B'), (10, 'C'), (11, 'D'), (12, 'E'), (13, 'F'), (14, 'G'), (15, 'DP')]
+                            ] %}
+                            
+                            {% for display_index in range(3) %}
+                                <div class="display-group">
+                                    <div class="display-title">Display {{ display_index + 1 }}</div>
+                                    <svg class="seven-segment" viewBox="0 0 120 200">
+                                        <!-- Segment A (top horizontal) -->
+                                        <path 
+                                            class="segment" 
+                                            data-pcb="{{ pcb - 1 }}" 
+                                            data-segment="{{ display_segments[display_index][0][0] }}"
+                                            d="M35 20L85 20L77 32L43 32L35 20"
+                                        />
+                                        
+                                        <!-- Segment B (top right vertical) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][1][0] }}"
+                                            d="M95 30L107 42L107 78L95 90L83 78L83 42L95 30"
+                                        />
+                                        
+                                        <!-- Segment C (bottom right vertical) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][2][0] }}"
+                                            d="M95 110L107 122L107 158L95 170L83 158L83 122L95 110"
+                                        />
+                                        
+                                        <!-- Segment D (bottom horizontal) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][3][0] }}"
+                                            d="M35 180L85 180L77 168L43 168L35 180"
+                                        />
+                                        
+                                        <!-- Segment E (bottom left vertical) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][4][0] }}"
+                                            d="M25 110L37 122L37 158L25 170L13 158L13 122L25 110"
+                                        />
+                                        
+                                        <!-- Segment F (top left vertical) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][5][0] }}"
+                                            d="M25 30L37 42L37 78L25 90L13 78L13 42L25 30"
+                                        />
+                                        
+                                        <!-- Segment G (middle horizontal) -->
+                                        <path 
+                                            class="segment"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][6][0] }}"
+                                            d="M35 100L43 92L77 92L85 100L77 108L43 108L35 100"
+                                        />
+                                        
+                                        <!-- Decimal Point -->
+                                        <circle 
+                                            class="dp"
+                                            data-pcb="{{ pcb - 1 }}"
+                                            data-segment="{{ display_segments[display_index][7][0] }}"
+                                            cx="105" 
+                                            cy="180" 
+                                            r="7"
+                                        />
+                                    </svg>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
+        </div>
     </div>
 
     <script>
@@ -314,7 +398,7 @@
             });
         }
 
-        // New preset management functionality
+        // Preset management functionality
         $("#savePresetBtn").click(function() {
             const name = $("#presetName").val().trim();
             if (!name) {
