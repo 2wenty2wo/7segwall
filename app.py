@@ -234,6 +234,11 @@ def stop_animation():
     animation_running = False
     return jsonify(success=True)
 
+@app.route('/get_grid_state', methods=['GET'])
+def get_grid_state():
+    """Return the current state of the segment grid for UI updates."""
+    return jsonify(success=True, grid=segment_grid)
+
 if __name__ == '__main__':
     try:
         setup_gpio()
