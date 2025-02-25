@@ -4,12 +4,14 @@ A Raspberry Pi-based controller for a grid of 7-segment LED displays with intera
 
 ![Screenshot](https://raw.githubusercontent.com/2wenty2wo/7segwall/refs/heads/main/screenshot.png)
 
+
 Overview
 --------
 
 This project provides a web interface to control a 5×3 grid of PCBs, each containing three 7-segment displays. It allows individual segment control and preset management across the entire display grid.
 
 The system uses a Raspberry Pi to drive shift registers that control the LED segments, with a Flask web server providing the user interface.
+
 
 Features
 --------
@@ -25,10 +27,12 @@ Features
 *   **Intuitive Controls**: Clean, responsive UI with Bootstrap-styled buttons
     
 
+
 Hardware Setup
 --------------
 
 The project controls 15 PCBs, each with 3 seven-segment displays (plus decimal points).
+
 
 ### Components
 
@@ -39,6 +43,7 @@ The project controls 15 PCBs, each with 3 seven-segment displays (plus decimal p
 *   Shift registers for segment control
     
 *   Connecting wires
+
     
 
 ### Wiring
@@ -50,6 +55,7 @@ The system uses 3 GPIO pins:
 *   CLOCK\_PIN (11): Clock signal
     
 *   LE\_PIN (5): Latch enable
+
     
 
 ### PCB Layout
@@ -61,6 +67,8 @@ The system uses 3 GPIO pins:
 | PCB4 |  PCB9 | PCB14 |
 | PCB5 | PCB10 | PCB15 |
 
+
+
 Software Requirements
 ---------------------
 
@@ -71,6 +79,7 @@ Software Requirements
 *   RPi.GPIO
     
 *   jQuery (included in the HTML)
+
     
 
 Installation
@@ -93,6 +102,7 @@ Installation
 `   bashCopypython app.py   `
 
 5.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
+
     
 
 Usage
@@ -126,6 +136,7 @@ Technical Details
 *   Data is shifted out to PCBs in sequence using the GPIO pins
     
 *   The Flask server handles user interactions and updates the display state
+
     
 
 ### Communication Protocol
