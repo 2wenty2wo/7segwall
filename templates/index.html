@@ -86,12 +86,6 @@
             padding: 0 2px;
         }
         
-        .display-title {
-            font-size: 0.75em;
-            margin-bottom: 2px;
-            color: #aaaaaa;
-        }
-        
         .seven-segment {
             max-width: 100%;
             height: auto;
@@ -474,7 +468,10 @@
     </div>
 
     <script>
+        // Global variables
         var hoverEnabled = false;
+        var animationPolling = null;
+        var isAnimating = false;
 
         // Toast notification function
         function showToast(message, type = 'info') {
@@ -524,6 +521,27 @@
             }, 3000);
         }
 
+        // Function to update the display based on current grid state
+        function updateDisplayFromGrid(grid) {
+            $(".segment, .dp").removeClass('on');
+            grid.forEach((pcb, pcbIndex) => {
+                pcb.forEach((state, segmentIndex) => {
+                    if (state === 1) {
+                        $(`.segment[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"], .dp[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"]`).addClass('on');
+                    }
+                });
+            });
+        }
+        
+        // Function to poll the current state during animation
+        function pollGridState() {
+            $.getJSON('/get_grid_state', function(response) {
+                if (response.success) {
+                    updateDisplayFromGrid(response.grid);
+                }
+            });
+        }
+
         // Toggle functionality
         $("#clearAllBtn").click(function() {
             $.post('/clear_all', {}, function(response) {
@@ -544,14 +562,30 @@
         
         $("#animateBtn").click(function() {
             const $this = $(this);
-            const isAnimating = $this.text() === 'Stop Animation';
+            const isCurrentlyAnimating = $this.text() === 'Stop Animation';
             
-            if (isAnimating) {
+            if (isCurrentlyAnimating) {
                 $.post('/stop_animation', {}, function(response) {
                     if (response.success) {
                         $this.text('Start Animation');
                         $this.removeClass('btn-danger').addClass('btn-success');
-                        showToast('Animation stopped', 'info');
+                        
+                        // Stop polling when animation stops
+                        isAnimating = false;
+                        if (animationPolling) {
+                            clearInterval(animationPolling);
+                            animationPolling = null;
+                        }
+                        
+                        // Make one final request to get the current state after stopping
+                        setTimeout(function() {
+                            $.getJSON('/get_grid_state', function(stateResponse) {
+                                if (stateResponse.success) {
+                                    updateDisplayFromGrid(stateResponse.grid);
+                                    showToast('Animation stopped', 'info');
+                                }
+                            });
+                        }, 300); // Wait a moment for the server to process the stop command
                     }
                 });
             } else {
@@ -560,6 +594,10 @@
                         $this.text('Stop Animation');
                         $this.removeClass('btn-success').addClass('btn-danger');
                         showToast('Animation started', 'success');
+                        
+                        // Start polling when animation starts
+                        isAnimating = true;
+                        animationPolling = setInterval(pollGridState, 200); // Poll every 200ms
                     }
                 });
             }
@@ -625,14 +663,7 @@
             $.post('/load_preset', { name: name }, function(response) {
                 if (response.success) {
                     // Update all segments based on loaded state
-                    $(".segment, .dp").removeClass('on');
-                    response.grid.forEach((pcb, pcbIndex) => {
-                        pcb.forEach((state, segmentIndex) => {
-                            if (state === 1) {
-                                $(`.segment[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"], .dp[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"]`).addClass('on');
-                            }
-                        });
-                    });
+                    updateDisplayFromGrid(response.grid);
                     showToast(`Preset "${name}" loaded`, 'success');
                 } else {
                     showToast(`Error: ${response.error}`, 'error');
