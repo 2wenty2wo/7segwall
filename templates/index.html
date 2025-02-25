@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7segwall</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         html, body {
@@ -198,6 +199,85 @@
             stroke: #ff6666;
         }
         
+        /* Toast notification styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            min-width: 250px;
+            max-width: 350px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .toast-success {
+            background-color: #28a745;
+            border-left: 5px solid #1e7e34;
+        }
+        
+        .toast-error {
+            background-color: #dc3545;
+            border-left: 5px solid #bd2130;
+        }
+        
+        .toast-warning {
+            background-color: #ffc107;
+            border-left: 5px solid #d39e00;
+            color: #212529;
+        }
+        
+        .toast-info {
+            background-color: #007bff;
+            border-left: 5px solid #0062cc;
+        }
+        
+        .toast-icon {
+            margin-right: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+        
+        .toast-message {
+            flex: 1;
+        }
+        
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 0 0 4px 4px;
+            width: 100%;
+            animation: progress-bar 3s linear forwards;
+        }
+        
+        @keyframes progress-bar {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        
         /* Responsive adjustments */
         @media (max-height: 700px) {
             .pcb-title, .display-title {
@@ -222,6 +302,18 @@
             .preset-controls {
                 flex-direction: column;
                 align-items: center;
+            }
+            
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+            
+            .toast {
+                min-width: auto;
+                max-width: none;
+                width: calc(100% - 20px);
             }
         }
     </style>
@@ -348,16 +440,68 @@
                 {% endfor %}
             {% endfor %}
         </div>
+        
+        <!-- Toast container -->
+        <div class="toast-container"></div>
     </div>
 
     <script>
         var hoverEnabled = false;
 
-        // Existing toggle functionality
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.querySelector('.toast-container');
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            // Set icon based on type
+            let iconClass = '';
+            switch(type) {
+                case 'success':
+                    iconClass = 'fa-solid fa-check';
+                    break;
+                case 'error':
+                    iconClass = 'fa-solid fa-xmark';
+                    break;
+                case 'warning':
+                    iconClass = 'fa-solid fa-triangle-exclamation';
+                    break;
+                default:
+                    iconClass = 'fa-solid fa-info';
+            }
+            
+            // Create toast content
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="${iconClass}"></i></div>
+                <div class="toast-message">${message}</div>
+                <div class="toast-progress"></div>
+            `;
+            
+            // Add to container
+            toastContainer.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Remove toast after animation duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Toggle functionality
         $("#clearAllBtn").click(function() {
             $.post('/clear_all', {}, function(response) {
                 if (response.success) {
                     $(".segment, .dp").removeClass('on');
+                    showToast('All segments cleared', 'success');
                 }
             });
         });
@@ -366,6 +510,8 @@
             hoverEnabled = !hoverEnabled;
             $(this).text(hoverEnabled ? 'Disable Hover' : 'Enable Hover');
             $(this).toggleClass('active');
+            
+            showToast(hoverEnabled ? 'Hover mode enabled' : 'Hover mode disabled', 'info');
         });
 
         $(".segment, .dp").click(function() {
@@ -402,7 +548,7 @@
         $("#savePresetBtn").click(function() {
             const name = $("#presetName").val().trim();
             if (!name) {
-                alert("Please enter a preset name");
+                showToast('Please enter a preset name', 'warning');
                 return;
             }
 
@@ -411,9 +557,9 @@
                     // Update preset dropdown
                     updatePresetDropdown(response.presets);
                     $("#presetName").val('');
-                    alert("Preset saved successfully!");
+                    showToast(`Preset "${name}" saved successfully`, 'success');
                 } else {
-                    alert("Error saving preset: " + response.error);
+                    showToast(`Error: ${response.error}`, 'error');
                 }
             });
         });
@@ -421,7 +567,7 @@
         $("#loadPresetBtn").click(function() {
             const name = $("#presetSelect").val();
             if (!name) {
-                alert("Please select a preset");
+                showToast('Please select a preset', 'warning');
                 return;
             }
 
@@ -436,9 +582,9 @@
                             }
                         });
                     });
-                    alert("Preset loaded successfully!");
+                    showToast(`Preset "${name}" loaded`, 'success');
                 } else {
-                    alert("Error loading preset: " + response.error);
+                    showToast(`Error: ${response.error}`, 'error');
                 }
             });
         });
@@ -446,7 +592,7 @@
         $("#deletePresetBtn").click(function() {
             const name = $("#presetSelect").val();
             if (!name) {
-                alert("Please select a preset");
+                showToast('Please select a preset', 'warning');
                 return;
             }
 
@@ -454,9 +600,9 @@
                 $.post('/delete_preset', { name: name }, function(response) {
                     if (response.success) {
                         updatePresetDropdown(response.presets);
-                        alert("Preset deleted successfully!");
+                        showToast(`Preset "${name}" deleted`, 'info');
                     } else {
-                        alert("Error deleting preset: " + response.error);
+                        showToast(`Error: ${response.error}`, 'error');
                     }
                 });
             }
