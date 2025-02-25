@@ -78,25 +78,21 @@ Installation
 
 1.  Clone the repository:
     
+`   bashCopygit clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopygit clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
-
-1.  Install requirements:
+2.  Install requirements:
     
+`   bashCopypip install flask RPi.GPIO   `
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopypip install flask RPi.GPIO   `
-
-1.  Create a presets directory:
+3.  Create a presets directory:
     
+`   bashCopymkdir presets   `
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopymkdir presets   `
-
-1.  Run the application:
+4.  Run the application:
     
+`   bashCopypython app.py   `
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopypython app.py   `
-
-1.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
+5.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
     
 
 Usage
@@ -123,7 +119,7 @@ Usage
 File Structure
 --------------
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   Copy.  ├── app.py                 # Main Flask application  ├── templates/  │   └── index.html         # Web interface template  ├── presets/               # Saved display patterns  │   ├── Tetris - Bar.json  │   ├── Tetris - L.json  │   └── ...  └── README.md   `
+`   Copy.  ├── app.py                 # Main Flask application  ├── templates/  │   └── index.html         # Web interface template  ├── presets/               # Saved display patterns  │   ├── Tetris - Bar.json  │   ├── Tetris - L.json  │   └── ...  └── README.md   `
 
 Technical Details
 -----------------
