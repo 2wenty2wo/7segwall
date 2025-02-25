@@ -1,8 +1,140 @@
 # 7segwall
+===============================
 
-| PCB1 |  PCB6 | PCB11 |
-|:----:|:-----:|:-----:|
-| PCB2 |  PCB7 | PCB12 |
-| PCB3 |  PCB8 | PCB13 |
-| PCB4 |  PCB9 | PCB14 |
-| PCB5 | PCB10 | PCB15 |
+A Raspberry Pi-based controller for a grid of 7-segment LED displays with interactive controls.
+
+Show Image
+
+Overview
+--------
+
+This project provides a web interface to control a 5×3 grid of PCBs, each containing three 7-segment displays. It allows individual segment control and preset management across the entire display grid.
+
+The system uses a Raspberry Pi to drive shift registers that control the LED segments, with a Flask web server providing the user interface.
+
+Features
+--------
+
+*   **Interactive Web Interface**: Control each segment of each display individually
+    
+*   **Physical Layout**: Arranged in a 5×3 grid matching the physical PCB layout
+    
+*   **Hover Toggle**: Enable/disable hover mode for quick segment toggling
+    
+*   **Preset Management**: Save, load, and delete display patterns
+    
+*   **Intuitive Controls**: Clean, responsive UI with Bootstrap-styled buttons
+    
+
+Hardware Setup
+--------------
+
+The project controls 15 PCBs, each with 3 seven-segment displays (plus decimal points).
+
+### Components
+
+*   Raspberry Pi (3 or 4)
+    
+*   15 PCBs with 7-segment displays
+    
+*   Shift registers for segment control
+    
+*   Connecting wires
+    
+
+### Wiring
+
+The system uses 3 GPIO pins:
+
+*   SDI\_PIN (10): Serial data input
+    
+*   CLOCK\_PIN (11): Clock signal
+    
+*   LE\_PIN (5): Latch enable
+    
+
+### PCB Layout
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   CopyPCB1  PCB6  PCB11  PCB2  PCB7  PCB12  PCB3  PCB8  PCB13    PCB4  PCB9  PCB14  PCB5  PCB10 PCB15   `
+
+Software Requirements
+---------------------
+
+*   Python 3.6+
+    
+*   Flask
+    
+*   RPi.GPIO
+    
+*   jQuery (included in the HTML)
+    
+
+Installation
+------------
+
+1.  Clone the repository:
+    
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopygit clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
+
+1.  Install requirements:
+    
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopypip install flask RPi.GPIO   `
+
+1.  Create a presets directory:
+    
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopymkdir presets   `
+
+1.  Run the application:
+    
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopypython app.py   `
+
+1.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
+    
+
+Usage
+-----
+
+### Basic Controls
+
+*   **Toggle Segment**: Click on any segment to toggle it on/off
+    
+*   **Enable Hover**: Activate hover mode to toggle segments by hovering
+    
+*   **Clear All**: Reset all segments to their off state
+    
+
+### Preset Management
+
+*   **Save Preset**: Enter a name and click "Save Preset"
+    
+*   **Load Preset**: Select a preset from the dropdown and click "Load"
+    
+*   **Delete Preset**: Select a preset and click "Delete"
+    
+
+File Structure
+--------------
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   Copy.  ├── app.py                 # Main Flask application  ├── templates/  │   └── index.html         # Web interface template  ├── presets/               # Saved display patterns  │   ├── Tetris - Bar.json  │   ├── Tetris - L.json  │   └── ...  └── README.md   `
+
+Technical Details
+-----------------
+
+### Data Flow
+
+*   The segment states are maintained in a 15×24 grid (15 PCBs × 24 segments)
+    
+*   Data is shifted out to PCBs in sequence using the GPIO pins
+    
+*   The Flask server handles user interactions and updates the display state
+    
+
+### Communication Protocol
+
+*   Serial data is shifted out to the PCBs using SPI-like protocol
+    
+*   Each PCB requires two 16-bit shifts to configure all segments
