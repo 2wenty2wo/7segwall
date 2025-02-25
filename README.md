@@ -55,7 +55,12 @@ The system uses 3 GPIO pins:
 
 ### PCB Layout
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   CopyPCB1  PCB6  PCB11  PCB2  PCB7  PCB12  PCB3  PCB8  PCB13    PCB4  PCB9  PCB14  PCB5  PCB10 PCB15   `
+| PCB1 |  PCB6 | PCB11 |
+|:----:|:-----:|:-----:|
+| PCB2 |  PCB7 | PCB12 |
+| PCB3 |  PCB8 | PCB13 |
+| PCB4 |  PCB9 | PCB14 |
+| PCB5 | PCB10 | PCB15 |
 
 Software Requirements
 ---------------------
