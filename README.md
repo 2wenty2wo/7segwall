@@ -116,11 +116,6 @@ Usage
 *   **Delete Preset**: Select a preset and click "Delete"
     
 
-File Structure
---------------
-
-`   Copy.  ├── app.py                 # Main Flask application  ├── templates/  │   └── index.html         # Web interface template  ├── presets/               # Saved display patterns  │   ├── Tetris - Bar.json  │   ├── Tetris - L.json  │   └── ...  └── README.md   `
-
 Technical Details
 -----------------
 
