@@ -87,19 +87,19 @@ Installation
 
 1.  Clone the repository:
     
-`   bashCopygit clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
+`   git clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
 
 2.  Install requirements:
     
-`   bashCopypip install flask RPi.GPIO   `
+`   pip install flask RPi.GPIO   `
 
 3.  Create a presets directory:
     
-`   bashCopymkdir presets   `
+`   mkdir presets   `
 
 4.  Run the application:
     
-`   bashCopypython app.py   `
+`   python app.py   `
 
 5.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
 
