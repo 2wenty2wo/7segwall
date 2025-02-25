@@ -87,21 +87,17 @@ Installation
 
 1.  Clone the repository:
     
-`   git clone https://github.com/user/7-segment-display.git  cd 7-segment-display   `
+`   git clone https://github.com/2wenty2wo/7segwall.git  cd 7segwall   `
 
 2.  Install requirements:
     
 `   pip install flask RPi.GPIO   `
 
-3.  Create a presets directory:
-    
-`   mkdir presets   `
-
-4.  Run the application:
+3.  Run the application:
     
 `   python app.py   `
 
-5.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
+4.  Access the web interface by navigating to http://\[Raspberry\_Pi\_IP\]:5000 in your browser.
 
     
 
