@@ -14,6 +14,7 @@
         <div class="controls">
             <button id="clearAllBtn" class="btn btn-danger">Clear All</button>
             <button id="hoverToggleBtn" class="btn btn-primary">Enable Hover</button>
+            <button id="animateBtn" class="btn btn-success">Start Animation</button>
             
             <!-- Preset Controls -->
             <div class="preset-controls">
@@ -31,13 +32,10 @@
                         {% endfor %}
                     </select>
                     <button id="loadPresetBtn" class="btn btn-success" title="Load Preset">
-                        <i class="fas fa-bolt"></i>
+                        <i class="fas fa-upload"></i>
                     </button>
                     <button id="deletePresetBtn" class="btn btn-warning" title="Delete Preset">
                         <i class="fas fa-trash"></i>
-                    </button>
-                    <button id="stopAnimationBtn" class="btn btn-danger" style="display: none;">
-                        <i class="fas fa-stop"></i>
                     </button>
                 </div>
             </div>
