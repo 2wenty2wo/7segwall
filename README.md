@@ -89,9 +89,9 @@ Installation
     
 `   git clone https://github.com/2wenty2wo/7segwall.git  cd 7segwall   `
 
-2.  Install requirements:
-    
-`   pip install flask RPi.GPIO   `
+2.  Install requirements from the requirements file:
+
+`   pip install -r requirements.txt   `
 
 3.  Run the application:
     
