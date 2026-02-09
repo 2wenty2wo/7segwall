@@ -1,7 +1,14 @@
 // Global variables
 var hoverEnabled = false;
-var animationPolling = null;
 var isAnimating = false;
+var socket = io();
+
+// Listen for real-time grid updates from the server
+socket.on('grid_update', function(data) {
+    if (isAnimating) {
+        updateDisplayFromGrid(data.grid);
+    }
+});
 
 $(document).ready(function() {
     // Set up event handlers
@@ -30,29 +37,14 @@ function setupEventHandlers() {
     $("#animateBtn").click(function() {
         const $this = $(this);
         const isCurrentlyAnimating = $this.text() === 'Stop Animation';
-        
+
         if (isCurrentlyAnimating) {
             $.post('/stop_animation', {}, function(response) {
                 if (response.success) {
                     $this.text('Start Animation');
                     $this.removeClass('btn-danger').addClass('btn-success');
-                    
-                    // Stop polling when animation stops
                     isAnimating = false;
-                    if (animationPolling) {
-                        clearInterval(animationPolling);
-                        animationPolling = null;
-                    }
-                    
-                    // Make one final request to get the current state after stopping
-                    setTimeout(function() {
-                        $.getJSON('/get_grid_state', function(stateResponse) {
-                            if (stateResponse.success) {
-                                updateDisplayFromGrid(stateResponse.grid);
-                                showToast('Animation stopped', 'info');
-                            }
-                        });
-                    }, 300); // Wait a moment for the server to process the stop command
+                    showToast('Animation stopped', 'info');
                 }
             });
         } else {
@@ -60,11 +52,8 @@ function setupEventHandlers() {
                 if (response.success) {
                     $this.text('Stop Animation');
                     $this.removeClass('btn-success').addClass('btn-danger');
-                    showToast('Animation started', 'success');
-                    
-                    // Start polling when animation starts
                     isAnimating = true;
-                    animationPolling = setInterval(pollGridState, 200); // Poll every 200ms
+                    showToast('Animation started', 'success');
                 }
             });
         }
@@ -197,15 +186,6 @@ function updateDisplayFromGrid(grid) {
                 $(`.segment[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"], .dp[data-pcb="${pcbIndex}"][data-segment="${segmentIndex}"]`).addClass('on');
             }
         });
-    });
-}
-
-// Function to poll the current state during animation
-function pollGridState() {
-    $.getJSON('/get_grid_state', function(response) {
-        if (response.success) {
-            updateDisplayFromGrid(response.grid);
-        }
     });
 }
 

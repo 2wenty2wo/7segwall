@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO
 import threading
 import time
 import RPi.GPIO as GPIO
@@ -16,10 +17,16 @@ from hardware import (
 from presets import get_all_presets, save_preset, apply_preset, delete_preset
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # Global variables for animation
 animation_running = False
 animation_thread = None
+
+
+def emit_grid_update():
+    """Broadcast current grid state to all connected WebSocket clients."""
+    socketio.emit("grid_update", {"grid": segment_grid})
 
 
 # Animation function
@@ -36,9 +43,11 @@ def animate_chase():
             clear_all_segments()
             set_display_state(chain_index, display_num, True)
             update_display()
+            emit_grid_update()
             time.sleep(0.5)
     clear_all_segments()
     update_display()
+    emit_grid_update()
 
 
 # --- Routes ---
@@ -53,6 +62,7 @@ def toggle_segment_route():
     pcb = int(request.form['pcb'])
     segment = int(request.form['segment'])
     result = toggle_segment(pcb, segment)
+    emit_grid_update()
     return jsonify(success=result)
 
 
@@ -60,6 +70,7 @@ def toggle_segment_route():
 def clear_all_route():
     clear_all_segments()
     update_display()
+    emit_grid_update()
     return jsonify(success=True)
 
 
@@ -78,6 +89,7 @@ def save_preset_route():
 def load_preset_route():
     name = request.form['name']
     if apply_preset(name):
+        emit_grid_update()
         return jsonify(success=True, grid=segment_grid)
     return jsonify(success=False, error="Preset not found")
 
@@ -117,6 +129,6 @@ def get_grid_state():
 if __name__ == '__main__':
     try:
         setup_gpio()
-        app.run(debug=True, host='0.0.0.0')
+        socketio.run(app, debug=True, host='0.0.0.0')
     except KeyboardInterrupt:
         GPIO.cleanup()

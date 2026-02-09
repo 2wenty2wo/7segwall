@@ -20,6 +20,22 @@ def client(monkeypatch, tmp_path):
         yield c
 
 
+@pytest.fixture
+def socket_client(monkeypatch, tmp_path):
+    """Create a Flask-SocketIO test client for WebSocket tests."""
+    import config
+    import presets as presets_mod
+
+    monkeypatch.setattr(config, "PRESETS_DIR", str(tmp_path))
+    monkeypatch.setattr(presets_mod, "PRESETS_DIR", str(tmp_path))
+
+    from app import app, socketio
+
+    app.config["TESTING"] = True
+    flask_client = app.test_client()
+    return socketio.test_client(app, flask_test_client=flask_client)
+
+
 @pytest.fixture(autouse=True)
 def reset_grid():
     from hardware import segment_grid
@@ -169,3 +185,41 @@ def test_stop_animation(client):
     assert app_mod.animation_running is False
     if app_mod.animation_thread:
         app_mod.animation_thread.join(timeout=2)
+
+
+# ── WebSocket ─────────────────────────────────────────────────────────
+
+
+def test_socketio_connects(socket_client):
+    assert socket_client.is_connected()
+    socket_client.disconnect()
+
+
+def test_socketio_grid_update_on_toggle(socket_client):
+    """Toggling a segment should emit a grid_update event."""
+    # Use the Flask test client embedded in the SocketIO test client
+    flask_client = socket_client.flask_test_client
+    flask_client.post("/toggle_segment", data={"pcb": "0", "segment": "0"})
+
+    received = socket_client.get_received()
+    grid_events = [r for r in received if r["name"] == "grid_update"]
+    assert len(grid_events) >= 1
+    assert grid_events[-1]["args"][0]["grid"][0][0] == 1
+    socket_client.disconnect()
+
+
+def test_socketio_grid_update_on_clear(socket_client):
+    """Clearing all segments should emit a grid_update event."""
+    from hardware import segment_grid
+
+    segment_grid[0][0] = 1
+    flask_client = socket_client.flask_test_client
+    flask_client.post("/clear_all")
+
+    received = socket_client.get_received()
+    grid_events = [r for r in received if r["name"] == "grid_update"]
+    assert len(grid_events) >= 1
+    # All segments should be 0
+    grid = grid_events[-1]["args"][0]["grid"]
+    assert all(all(v == 0 for v in row) for row in grid)
+    socket_client.disconnect()

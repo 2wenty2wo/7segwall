@@ -29,9 +29,9 @@
 
 ## Tech Stack
 
-- **Backend**: Python 3.6+, Flask 2.2.3
+- **Backend**: Python 3.6+, Flask 2.2.3, Flask-SocketIO 5.6.0
 - **Hardware**: RPi.GPIO 0.7.1 (Raspberry Pi GPIO control)
-- **Frontend**: jQuery 3.6.0 (CDN), vanilla CSS, SVG segment rendering
+- **Frontend**: jQuery 3.6.0 (CDN), Socket.IO 4.x client (CDN), vanilla CSS, SVG segment rendering
 - **Template engine**: Jinja2
 - **No build step** — run directly with `python app.py`
 
@@ -54,12 +54,13 @@ Requires a Raspberry Pi with GPIO access for hardware control. The web UI works 
 3. `update_display()` shifts bit data out through GPIO (SDI/Clock/Latch)
 4. Shift registers drive physical LED segments
 5. Server responds with JSON; UI updates CSS classes on SVG elements
+6. Server emits `grid_update` via WebSocket to all connected clients (real-time sync)
 
 ### Key Modules
 
 | Module | Responsibility |
 |--------|---------------|
-| `app.py` | Flask routes, animation threading, application entry point |
+| `app.py` | Flask routes, SocketIO events, animation threading, application entry point |
 | `config.py` | GPIO pin numbers (SDI=10, Clock=11, LE=5), PCB-to-chain mapping, physical order |
 | `hardware.py` | `segment_grid` (15x24 global array), GPIO setup, shift_out/latch, toggle/clear |
 | `presets.py` | JSON file I/O for presets, list/save/load/delete operations |
@@ -104,9 +105,9 @@ Per PCB (24 segments total):
 
 ### Frontend JavaScript
 - **jQuery** for all DOM manipulation and AJAX (`$.post`, `$.getJSON`)
+- **Socket.IO** client for real-time grid updates (replaces polling)
 - **Debouncing**: 50ms debounce on hover events
 - **State flags**: `hoverEnabled`, `isAnimating` control UI behavior
-- **Polling**: 200ms interval to sync grid state during animation
 
 ### CSS
 - **Dark theme**: background `#121212`, text `#e0e0e0`
@@ -134,7 +135,7 @@ python -m pytest tests/ -v
 | `tests/test_config.py` | Constants, PCB mappings, presets directory |
 | `tests/test_hardware.py` | Segment grid state, toggle, clear, set_display_state, GPIO calls |
 | `tests/test_presets.py` | Save/load/delete/list presets (uses `tmp_path` for isolation) |
-| `tests/test_app.py` | All Flask routes via the test client, including animation start/stop |
+| `tests/test_app.py` | All Flask routes via the test client, animation start/stop, WebSocket emit tests |
 
 ### Conventions
 
