@@ -12,12 +12,18 @@
 ├── config.py           # GPIO pins, display constants, PCB mapping
 ├── hardware.py         # GPIO control, shift register protocol, segment state
 ├── presets.py          # Preset save/load/delete (JSON files)
+├── conftest.py         # Pytest root — mocks RPi.GPIO for all tests
 ├── requirements.txt    # Python dependencies (Flask, RPi.GPIO)
 ├── templates/
 │   └── index.html      # Jinja2 template with SVG 7-segment displays
 ├── static/
 │   ├── css/main.css    # Dark theme, responsive grid layout
 │   └── js/main.js      # jQuery frontend logic, AJAX, hover mode
+├── tests/              # Pytest test suite
+│   ├── test_config.py  # Config constants and mapping tests
+│   ├── test_hardware.py # Segment grid, GPIO mock tests
+│   ├── test_presets.py # Preset I/O tests (uses tmp_path)
+│   └── test_app.py     # Flask route integration tests
 └── presets/            # Saved display patterns as JSON (15x24 matrices)
 ```
 
@@ -114,7 +120,27 @@ Presets are JSON files in `presets/` containing a 15x24 matrix (array of arrays,
 
 ## Testing
 
-No test suite exists. There is no pytest, unittest, or any testing configuration. When adding tests, consider mocking `RPi.GPIO` since it's only available on Raspberry Pi hardware.
+Tests use **pytest** and live in `tests/`. `RPi.GPIO` is mocked globally in `conftest.py` so the suite runs on any machine (no Raspberry Pi required).
+
+```bash
+python -m pytest tests/ -v
+```
+
+### Test layout
+
+| File | Covers |
+|------|--------|
+| `conftest.py` | Injects a `MagicMock` for `RPi.GPIO` before any project import |
+| `tests/test_config.py` | Constants, PCB mappings, presets directory |
+| `tests/test_hardware.py` | Segment grid state, toggle, clear, set_display_state, GPIO calls |
+| `tests/test_presets.py` | Save/load/delete/list presets (uses `tmp_path` for isolation) |
+| `tests/test_app.py` | All Flask routes via the test client, including animation start/stop |
+
+### Conventions
+
+- Each test file resets the global `segment_grid` to all-zeros via an `autouse` fixture
+- Preset tests redirect `PRESETS_DIR` to a `tmp_path` so they never touch the real `presets/` directory
+- GPIO-dependent tests access the mock through `hardware.GPIO` (the module-level binding) rather than `sys.modules`, since `hardware.py` binds `GPIO` at import time
 
 ## Common Tasks
 
