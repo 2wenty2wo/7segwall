@@ -14,6 +14,7 @@ def client(monkeypatch, tmp_path):
     monkeypatch.setattr(presets_mod, "PRESETS_DIR", str(tmp_path))
 
     from app import app
+
     app.config["TESTING"] = True
     with app.test_client() as c:
         yield c
@@ -23,6 +24,7 @@ def client(monkeypatch, tmp_path):
 def reset_grid():
     from hardware import segment_grid
     from config import NUM_PCBS, NUM_SEGMENTS_PER_PCB
+
     for i in range(NUM_PCBS):
         for j in range(NUM_SEGMENTS_PER_PCB):
             segment_grid[i][j] = 0
@@ -30,6 +32,7 @@ def reset_grid():
 
 
 # ── GET / ─────────────────────────────────────────────────────────────
+
 
 def test_index_returns_html(client):
     resp = client.get("/")
@@ -39,8 +42,10 @@ def test_index_returns_html(client):
 
 # ── POST /toggle_segment ─────────────────────────────────────────────
 
+
 def test_toggle_segment(client):
     from hardware import segment_grid
+
     resp = client.post("/toggle_segment", data={"pcb": "0", "segment": "0"})
     data = json.loads(resp.data)
     assert data["success"] is True
@@ -49,6 +54,7 @@ def test_toggle_segment(client):
 
 def test_toggle_segment_twice(client):
     from hardware import segment_grid
+
     client.post("/toggle_segment", data={"pcb": "2", "segment": "5"})
     client.post("/toggle_segment", data={"pcb": "2", "segment": "5"})
     assert segment_grid[2][5] == 0
@@ -56,8 +62,10 @@ def test_toggle_segment_twice(client):
 
 # ── POST /clear_all ──────────────────────────────────────────────────
 
+
 def test_clear_all(client):
     from hardware import segment_grid
+
     segment_grid[0][0] = 1
     segment_grid[14][23] = 1
     resp = client.post("/clear_all")
@@ -69,8 +77,10 @@ def test_clear_all(client):
 
 # ── Preset routes ────────────────────────────────────────────────────
 
+
 def test_save_and_load_preset(client):
     from hardware import segment_grid
+
     # Toggle a segment, then save
     client.post("/toggle_segment", data={"pcb": "1", "segment": "3"})
     resp = client.post("/save_preset", data={"name": "mypreset"})
@@ -115,9 +125,10 @@ def test_delete_preset_missing(client):
 
 # ── GET /get_grid_state ───────────────────────────────────────────────
 
+
 def test_get_grid_state(client):
-    from hardware import segment_grid
     from config import NUM_PCBS, NUM_SEGMENTS_PER_PCB
+
     resp = client.get("/get_grid_state")
     data = json.loads(resp.data)
     assert data["success"] is True
@@ -134,8 +145,10 @@ def test_get_grid_state_reflects_toggle(client):
 
 # ── Animation routes ─────────────────────────────────────────────────
 
+
 def test_start_animation(client):
     import app as app_mod
+
     resp = client.post("/start_animation")
     data = json.loads(resp.data)
     assert data["success"] is True
@@ -148,6 +161,7 @@ def test_start_animation(client):
 
 def test_stop_animation(client):
     import app as app_mod
+
     client.post("/start_animation")
     resp = client.post("/stop_animation")
     data = json.loads(resp.data)

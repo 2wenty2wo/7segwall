@@ -1,0 +1,8 @@
+[lint]
+select = ["F", "E", "W"]
+ignore = [
+    "E501",  # line too long — not enforced in this project
+]
+
+[format]
+quote-style = "preserve"
