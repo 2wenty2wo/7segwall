@@ -3,6 +3,7 @@ import json
 from config import PRESETS_DIR
 from hardware import segment_grid, update_display
 
+
 def save_preset(name, grid_state):
     """Save the current grid state as a preset"""
     filename = os.path.join(PRESETS_DIR, f"{name}.json")
@@ -15,6 +16,7 @@ def save_preset(name, grid_state):
         print(f"Error saving preset: {e}")
         return False
     return True
+
 
 def load_preset(name):
     """Load a preset from file and return the grid state"""
@@ -30,22 +32,24 @@ def load_preset(name):
         print(f"Error loading preset: {e}")
         return None
 
+
 def apply_preset(name):
     """Load a preset and apply it to the display"""
     global segment_grid
-    
+
     loaded_grid = load_preset(name)
     if loaded_grid is None:
         return False
-    
+
     # Copy to the global segment grid
     for i in range(len(segment_grid)):
         for j in range(len(segment_grid[i])):
             if i < len(loaded_grid) and j < len(loaded_grid[i]):
                 segment_grid[i][j] = loaded_grid[i][j]
-    
+
     update_display()
     return True
+
 
 def get_all_presets():
     """Get a list of all available presets"""
@@ -58,6 +62,7 @@ def get_all_presets():
     except Exception as e:
         print(f"Error getting presets: {e}")
         return []
+
 
 def delete_preset(name):
     """Delete a preset file"""
